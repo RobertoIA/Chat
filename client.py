@@ -11,11 +11,11 @@ class Receive(threading.Thread):
 			msg = str(self.conn.recv(1024)).split('\n')
 			for line in msg:
 				if line != '':
-					if 'EXIT' in line:
+					if '/exit' in line:
 						connected = False
 					else:
 						print line
-		print 'logout'
+		print 'logged out, press enter to close'
 		self.conn.close()
 
 class Send(threading.Thread):
