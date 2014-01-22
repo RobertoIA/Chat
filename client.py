@@ -15,7 +15,7 @@ class Receive(threading.Thread):
 						connected = False
 					else:
 						print line
-		print 'logged out, press enter to close'
+		print 'Logged out, press enter to close'
 		self.conn.close()
 
 class Send(threading.Thread):

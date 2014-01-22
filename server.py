@@ -10,9 +10,13 @@ class ClientManager(threading.Thread):
 		global clients
 
 		clients.append(self.conn)
-		print 'Conectado ' + self.addr[0] + ' en puerto ' + str(self.addr[1])
+
+		conn_alert = 'Connected ' + self.addr[0] + '/' + str(self.addr[1])
+		print conn_alert
 		self.conn.send('Connected to chat')
 		self.conn.send('Users: ' + str(len(clients)))
+		for client in clients:
+			if client is not self.conn: client.send(conn_alert)
 
 		connected = True
 		while connected:
@@ -28,7 +32,7 @@ class ClientManager(threading.Thread):
 						for client in clients:
 							if client is not self.conn: client.send(response)
 
-		print self.addr[0] + ' logout'
+		print self.addr[0] + '/' + str(self.addr[1]) + ' logout'
 		self.conn.close()
 
 if __name__ == '__main__':
@@ -40,7 +44,7 @@ if __name__ == '__main__':
 	main_socket.bind(('', PORT))
 	main_socket.listen(5)
 
-	print 'Iniciando servidor en puerto ' + str(PORT)
+	print 'Starting server at port ' + str(PORT)
 
 	while True:
 		conn, addr = main_socket.accept()
