@@ -5,13 +5,14 @@ class ClientManager(threading.Thread):
 		threading.Thread.__init__(self)
 		self.conn = conn
 		self.addr = addr
+		self.id = self.addr[0] + '/' + str(self.addr[1])
 
 	def run(self):
 		global clients
 
 		clients.append(self.conn)
 
-		conn_alert = 'Connected ' + self.addr[0] + '/' + str(self.addr[1])
+		conn_alert = 'Connected ' + self.id
 		print conn_alert
 		self.conn.send('Connected to chat')
 		self.conn.send('Users: ' + str(len(clients)))
@@ -28,14 +29,14 @@ class ClientManager(threading.Thread):
 						clients.remove(self.conn)
 						self.conn.send('/exit')
 						for client in clients:
-							logout_alert = self.addr[0] + '/' + str(self.addr[1]) + ' logged out'
+							logout_alert = self.id + ' logged out'
 							if client is not self.conn: client.send(logout_alert)
 					else:
-						response = self.addr[0] + '/' + str(self.addr[1]) + ' : ' + line
+						response = self.id + ' : ' + line
 						for client in clients:
 							if client is not self.conn: client.send(response)
 
-		print self.addr[0] + '/' + str(self.addr[1]) + ' logout'
+		print self.id + ' logout'
 		self.conn.close()
 
 if __name__ == '__main__':
