@@ -10,13 +10,11 @@ class Receive(threading.Thread):
 		while connected:
 			msg = str(self.conn.recv(1024)).split('\n')
 			for line in msg:
-				if line != '':
-					if '/exit' in line:
-						connected = False
-					else:
-						print line
-		print 'Logged out, press enter to close'
+				if line != '' and '/exit' not in line:
+					print line
+		print 'Logged out'
 		self.conn.close()
+
 
 class Send(threading.Thread):
 	def __init__(self, conn):
@@ -25,10 +23,11 @@ class Send(threading.Thread):
 
 	def run(self):
 		global connected
+
 		while connected:
 			msg = raw_input('')
-			# connection may be interrupted while waiting for input
-			if connected: self.conn.send(msg)
+			self.conn.send(msg)
+			if '/exit' in msg: connected = False
 		self.conn.close()
 
 

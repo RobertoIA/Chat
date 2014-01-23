@@ -27,6 +27,9 @@ class ClientManager(threading.Thread):
 						connected = False
 						clients.remove(self.conn)
 						self.conn.send('/exit')
+						for client in clients:
+							logout_alert = self.addr[0] + '/' + str(self.addr[1]) + ' logged out'
+							if client is not self.conn: client.send(logout_alert)
 					else:
 						response = self.addr[0] + '/' + str(self.addr[1]) + ' : ' + line
 						for client in clients:
