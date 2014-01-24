@@ -31,6 +31,14 @@ class ClientManager(threading.Thread):
 						for client in clients:
 							logout_alert = self.id + ' logged out'
 							if client is not self.conn: client.send(logout_alert)
+					if '/name' in line:
+						index = line.find('/name') + len('/name')
+						new_id = line[index:]
+						new_id = new_id.strip()
+						for client in clients:
+							name_change_alert = self.id + ' is now ' + new_id
+							client.send(name_change_alert)
+						self.id = new_id
 					else:
 						response = self.id + ' : ' + line
 						for client in clients:
