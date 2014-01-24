@@ -28,23 +28,24 @@ class ClientManager(threading.Thread):
 						connected = False
 						clients.remove(self.conn)
 						self.conn.send('/exit')
+						logout_alert = self.id + ' logged out'
+						print logout_alert
 						for client in clients:
-							logout_alert = self.id + ' logged out'
 							if client is not self.conn: client.send(logout_alert)
-					if '/name' in line:
+					elif '/name' in line:
 						index = line.find('/name') + len('/name')
 						new_id = line[index:]
 						new_id = new_id.strip()
+						name_change_alert = self.id + ' is now ' + new_id
+						print name_change_alert
 						for client in clients:
-							name_change_alert = self.id + ' is now ' + new_id
 							client.send(name_change_alert)
 						self.id = new_id
 					else:
 						response = self.id + ' : ' + line
+						print response
 						for client in clients:
 							if client is not self.conn: client.send(response)
-
-		print self.id + ' logout'
 		self.conn.close()
 
 if __name__ == '__main__':
