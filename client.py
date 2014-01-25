@@ -20,6 +20,7 @@ class Send(threading.Thread):
 	def __init__(self, conn):
 		threading.Thread.__init__(self)
 		self.conn = conn
+		self.conn.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
 
 	def run(self):
 		global connected
