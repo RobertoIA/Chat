@@ -1,4 +1,8 @@
-import threading, socket
+import threading, socket, Queue
+
+# queues are thread safe
+message_in_buffer = Queue.Queue(maxsize = 0) # infinite queue size
+message_out_buffer = Queue.Queue(maxsize = 0)
 
 class Receive(threading.Thread):
 	def __init__(self, conn):
@@ -11,7 +15,7 @@ class Receive(threading.Thread):
 			msg = str(self.conn.recv(1024)).split('\n')
 			for line in msg:
 				if line != '' and '/exit' not in line:
-					print line
+					message_in_buffer.put(line)
 		print 'Logged out'
 		self.conn.close()
 
@@ -26,20 +30,30 @@ class Send(threading.Thread):
 		global connected
 
 		while connected:
-			msg = raw_input('')
+			msg = message_out_buffer.get()
 			self.conn.send(msg)
 			if '/exit' in msg: connected = False
 		self.conn.close()
 
+def connect(host, port):
+	global connected
 
-if __name__ == '__main__':
-	PORT = 8080
-	HOST = '127.0.0.1'
 	connected = True
-
 	main_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 	#main_socket.connect((socket.gethostname(), PORT))
 	main_socket.connect((HOST, PORT))
 
 	Receive(main_socket).start()
 	Send(main_socket).start()
+
+if __name__ == '__main__':
+	PORT = 8080
+	HOST = '127.0.0.1'
+	
+	connect(HOST, PORT)
+
+	# read-only
+	while connected:
+		print message_in_buffer.get()
+
+	
