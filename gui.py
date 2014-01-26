@@ -1,10 +1,18 @@
-import wx
-import re
-import threading, socket
+import wx, re
+import threading
 import client
 
 PORT = 8080
 connected = False
+
+class UpdateChat(threading.Thread):
+	def __init__(self, write):
+		threading.Thread.__init__(self)
+		self.write = write
+
+	def run(self):
+		while client.connected:
+			self.write(client.message_in_buffer.get())
 
 class Frame(wx.Frame):
 	def __init__(self, parent, title):
@@ -79,9 +87,10 @@ class Frame(wx.Frame):
 		else:
 			self.write_to_chat('Connecting to ' + host + ':' + str(PORT))
 			client.connect(host, PORT)
+			UpdateChat(self.write_to_chat).start()
 
-			while client.connected:
-				self.write_to_chat(client.message_in_buffer.get())
+			#while client.connected:
+			#	self.write_to_chat(client.message_in_buffer.get())
 
 
 if __name__ == '__main__':
