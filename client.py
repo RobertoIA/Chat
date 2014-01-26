@@ -40,8 +40,8 @@ def connect(host, port):
 
 	connected = True
 	main_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-	#main_socket.connect((socket.gethostname(), PORT))
-	main_socket.connect((HOST, PORT))
+	#main_socket.connect((socket.gethostname(), port))
+	main_socket.connect((host, port))
 
 	Receive(main_socket).start()
 	Send(main_socket).start()
