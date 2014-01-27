@@ -4,6 +4,8 @@ import threading, socket, Queue
 message_in_buffer = Queue.Queue(maxsize = 0) # infinite queue size
 message_out_buffer = Queue.Queue(maxsize = 0)
 
+connected = False
+
 class Receive(threading.Thread):
 	def __init__(self, conn):
 		threading.Thread.__init__(self)
