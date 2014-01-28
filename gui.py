@@ -56,14 +56,26 @@ class Frame(wx.Frame):
 		self.chat_panel.SetSizer(chatSizer)
 
 	def init_talk_panel(self):
-		self.txTalk = wx.TextCtrl(self.talk_panel)
+		self.txTalk = wx.TextCtrl(self.talk_panel, style = wx.TE_PROCESS_ENTER)
 
 		talkSizer = wx.BoxSizer(wx.HORIZONTAL)
 		talkSizer.Add(self.txTalk, 1, wx.EXPAND)
 		self.talk_panel.SetSizer(talkSizer)
+		
+		self.txTalk.Bind(wx.EVT_KEY_DOWN, self.send_message)
 
 	def write_to_chat(self, message):
 		self.txChat.AppendText(message + '\n')
+
+	def send_message(self, event):
+		if event.GetKeyCode() == wx.WXK_RETURN:
+			message = self.txTalk.GetValue()
+			self.txTalk.Clear()
+			self.write_to_chat(message)
+			client.message_out_buffer.put(message)
+		else:
+			event.Skip()
+			
 
 	def validate_url(self, url):
 		# from http://stackoverflow.com/questions/7160737
