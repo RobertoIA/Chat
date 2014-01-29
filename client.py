@@ -18,7 +18,6 @@ class Receive(threading.Thread):
 			for line in msg:
 				if line != '' and '/exit' not in line:
 					message_in_buffer.put(line)
-		print 'Logged out'
 		self.conn.close()
 
 

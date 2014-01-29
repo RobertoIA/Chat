@@ -58,6 +58,7 @@ class Frame(wx.Frame):
 
 	def init_talk_panel(self):
 		self.txTalk = wx.TextCtrl(self.talk_panel, style = wx.TE_PROCESS_ENTER)
+		self.txTalk.SetFocus()
 
 		talkSizer = wx.BoxSizer(wx.HORIZONTAL)
 		talkSizer.Add(self.txTalk, 1, wx.EXPAND)
