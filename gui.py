@@ -17,6 +17,7 @@ class Frame(wx.Frame):
 	def __init__(self, parent, title):
 		super(Frame, self).__init__(parent, title = title, size = (300, 500))
 		self.init_gui()
+		self.Bind(wx.EVT_CLOSE, self.close)
 		self.Centre()
 		self.Show(True)
 
@@ -76,6 +77,9 @@ class Frame(wx.Frame):
 		else:
 			event.Skip()
 			
+	def close(self, event):
+		client.message_out_buffer.put('/exit')
+		event.Skip()
 
 	def validate_url(self, url):
 		# from http://stackoverflow.com/questions/7160737
