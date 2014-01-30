@@ -79,7 +79,7 @@ class Frame(wx.Frame):
 			event.Skip()
 			
 	def close(self, event):
-		client.message_out_buffer.put('/exit')
+		client.disconnect()
 		event.Skip()
 
 	def validate_url(self, url):

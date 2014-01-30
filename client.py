@@ -46,6 +46,12 @@ def connect(host, port):
 
 	Receive(main_socket).start()
 	Send(main_socket).start()
+	
+def disconnect():
+	global connected
+	
+	connected = False
+	message_out_buffer.put('/exit')
 
 if __name__ == '__main__':
 	PORT = 8080
