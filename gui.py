@@ -73,7 +73,6 @@ class Frame(wx.Frame):
 		if event.GetKeyCode() == wx.WXK_RETURN:
 			message = self.txTalk.GetValue()
 			self.txTalk.Clear()
-			self.write_to_chat(message)
 			client.message_out_buffer.put(message)
 		else:
 			event.Skip()

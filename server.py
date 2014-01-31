@@ -45,7 +45,7 @@ class ClientManager(threading.Thread):
 						response = self.id + ' : ' + line
 						print response
 						for client in clients:
-							if client is not self.conn: client.send(response)
+							client.send(response)
 		self.conn.close()
 
 if __name__ == '__main__':
