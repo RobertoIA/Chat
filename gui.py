@@ -40,14 +40,14 @@ class Frame(wx.Frame):
 	def init_conn_panel(self):
 		self.txConn = wx.TextCtrl(self.conn_panel)
 		self.txConn.SetValue('localhost')
-		btConn = wx.Button(self.conn_panel, label = 'Connect')
+		self.btConn = wx.Button(self.conn_panel, label = 'Connect')
 
 		connSizer = wx.BoxSizer(wx.HORIZONTAL)
 		connSizer.Add(self.txConn, 1, wx.EXPAND)
-		connSizer.Add(btConn)
+		connSizer.Add(self.btConn)
 		self.conn_panel.SetSizer(connSizer)
 
-		self.Bind(wx.EVT_BUTTON, self.connect, btConn)
+		self.Bind(wx.EVT_BUTTON, self.connect, self.btConn)
 
 	def init_chat_panel(self):
 		self.txChat = wx.TextCtrl(self.chat_panel, style = wx.TE_MULTILINE | wx.TE_READONLY)
@@ -103,6 +103,8 @@ class Frame(wx.Frame):
 			self.write_to_chat('Connecting to ' + host + ':' + str(PORT))
 			client.connect(host, PORT)
 			UpdateChat(self.write_to_chat).start()
+		self.btConn.Disable()
+		self.txTalk.SetFocus()
 
 
 if __name__ == '__main__':
