@@ -94,17 +94,25 @@ class Frame(wx.Frame):
 
 		return regex.match(url)
 
-	def connect(self, e):
-		host = self.txConn.GetValue()
-
-		if (self.validate_url(host) is None):
-			self.write_to_chat('Invalid direction: ' + host)
+	def connect(self, e): # connect_disconnect(self, e): if connected:
+		if not client.connected:
+			host = self.txConn.GetValue()
+	
+			if (self.validate_url(host) is None):
+				self.write_to_chat('Invalid direction: ' + host)
+			else:
+				self.write_to_chat('Connecting to ' + host + ':' + str(PORT))
+				client.connect(host, PORT)
+				UpdateChat(self.write_to_chat).start()
+			self.btConn.SetLabel('Disconnect')
+			self.txConn.Disable()
+			self.txTalk.SetFocus()
 		else:
-			self.write_to_chat('Connecting to ' + host + ':' + str(PORT))
-			client.connect(host, PORT)
-			UpdateChat(self.write_to_chat).start()
-		self.btConn.Disable()
-		self.txTalk.SetFocus()
+			self.write_to_chat('Logged out.\n')
+			client.disconnect()
+			self.btConn.SetLabel('Connect')
+			self.txConn.Enable()
+			self.txTalk.SetFocus()
 
 
 if __name__ == '__main__':
