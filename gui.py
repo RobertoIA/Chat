@@ -47,7 +47,7 @@ class Frame(wx.Frame):
 		connSizer.Add(self.btConn)
 		self.conn_panel.SetSizer(connSizer)
 
-		self.Bind(wx.EVT_BUTTON, self.connect, self.btConn)
+		self.Bind(wx.EVT_BUTTON, self.connect_disconnect, self.btConn)
 
 	def init_chat_panel(self):
 		self.txChat = wx.TextCtrl(self.chat_panel, style = wx.TE_MULTILINE | wx.TE_READONLY)
@@ -94,7 +94,7 @@ class Frame(wx.Frame):
 
 		return regex.match(url)
 
-	def connect(self, e): # connect_disconnect(self, e): if connected:
+	def connect_disconnect(self, e):
 		if not client.connected:
 			host = self.txConn.GetValue()
 	
