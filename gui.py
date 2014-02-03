@@ -81,7 +81,8 @@ class Frame(wx.Frame):
 			event.Skip()
 			
 	def close(self, event):
-		self.client.disconnect()
+		if self.client and self.client.connected:
+			self.client.disconnect()
 		event.Skip()
 
 	def validate_url(self, url):
