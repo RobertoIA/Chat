@@ -1,25 +1,28 @@
 import wx, re
 import threading
-import client
+from client import Client
 
 PORT = 8080
 
 class UpdateChat(threading.Thread):
-	def __init__(self, write):
+	def __init__(self, write, client):
 		threading.Thread.__init__(self)
 		self.write = write
+		self.client = client
 
 	def run(self):
-		while client.connected:
-			self.write(client.message_in_buffer.get())
+		while self.client.connected:
+			self.write(self.client.in_buffer.get())
 
 class Frame(wx.Frame):
 	def __init__(self, parent, title):
 		super(Frame, self).__init__(parent, title = title, size = (300, 500))
+		self.client = None
 		self.init_gui()
 		self.Bind(wx.EVT_CLOSE, self.close)
 		self.Centre()
 		self.Show(True)
+		
 
 	def init_gui(self):
 		self.main_panel = wx.Panel(self)
@@ -73,12 +76,12 @@ class Frame(wx.Frame):
 		if event.GetKeyCode() == wx.WXK_RETURN:
 			message = self.txTalk.GetValue()
 			self.txTalk.Clear()
-			client.message_out_buffer.put(message)
+			self.client.out_buffer.put(message)
 		else:
 			event.Skip()
 			
 	def close(self, event):
-		client.disconnect()
+		self.client.disconnect()
 		event.Skip()
 
 	def validate_url(self, url):
@@ -95,21 +98,23 @@ class Frame(wx.Frame):
 		return regex.match(url)
 
 	def connect_disconnect(self, e):
-		if not client.connected:
+		if not self.client or not self.client.connected:
 			host = self.txConn.GetValue()
+			
+			self.client = Client(host, PORT)
 	
 			if (self.validate_url(host) is None):
 				self.write_to_chat('Invalid direction: ' + host)
 			else:
 				self.write_to_chat('Connecting to ' + host + ':' + str(PORT))
-				client.connect(host, PORT)
-				UpdateChat(self.write_to_chat).start()
+				self.client.connect()
+				UpdateChat(self.write_to_chat, self.client).start()
 			self.btConn.SetLabel('Disconnect')
 			self.txConn.Disable()
 			self.txTalk.SetFocus()
 		else:
 			self.write_to_chat('Logged out.\n')
-			client.disconnect()
+			self.client.disconnect()
 			self.btConn.SetLabel('Connect')
 			self.txConn.Enable()
 			self.txTalk.SetFocus()

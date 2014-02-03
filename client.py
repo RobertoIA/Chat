@@ -1,66 +1,60 @@
 import threading, socket, Queue
 
-# queues are thread safe
-message_in_buffer = Queue.Queue(maxsize = 0) # infinite queue size
-message_out_buffer = Queue.Queue(maxsize = 0)
-
-connected = False
-
 class Receive(threading.Thread):
-	def __init__(self, conn):
+	def __init__(self, conn, client):
 		threading.Thread.__init__(self)
 		self.conn = conn
+		self.client = client
+		self.buffer = client.in_buffer
 
 	def run(self):
-		global connected
-		while connected:
+		while self.client.connected:
 			msg = str(self.conn.recv(1024)).split('\n')
 			for line in msg:
 				if line != '' and '/exit' not in line:
-					message_in_buffer.put(line)
+					self.buffer.put(line)
 		self.conn.close()
 
 
 class Send(threading.Thread):
-	def __init__(self, conn):
+	def __init__(self, conn, client):
 		threading.Thread.__init__(self)
 		self.conn = conn
 		self.conn.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
+		self.client = client
+		self.buffer = client.out_buffer
 
 	def run(self):
-		global connected
-
-		while connected:
-			msg = message_out_buffer.get()
+		while self.client.connected:
+			msg = self.buffer.get()
 			self.conn.send(msg)
-			if '/exit' in msg: connected = False
+			if '/exit' in msg: self.client.connected = False
 		self.conn.close()
 
-def connect(host, port):
-	global connected
-
-	connected = True
-	main_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-	#main_socket.connect((socket.gethostname(), port))
-	main_socket.connect((host, port))
-
-	Receive(main_socket).start()
-	Send(main_socket).start()
+class Client:
+	def __init__(self, host, port):
+		self.host = host
+		self.port = port
+		
+		# queues are thread safe
+		self.in_buffer = Queue.Queue(maxsize = 0) # infinite queue size
+		self.out_buffer = Queue.Queue(maxsize = 0)
+		
+		self.connected = False
+		
+	def connect(self):	
+		self.connected = True
+		main_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+		#main_socket.connect((socket.gethostname(), port))
+		main_socket.connect((self.host, self.port))
 	
-def disconnect():
-	global connected
+		Receive(main_socket, self).start()
+		Send(main_socket, self).start()
 	
-	connected = False
-	message_out_buffer.put('/exit')
+	def disconnect(self):
+		self.connected = False
+		self.out_buffer.put('/exit')
 
 if __name__ == '__main__':
-	PORT = 8080
-	HOST = '127.0.0.1'
-	
-	connect(HOST, PORT)
-
-	# read-only
-	while connected:
-		print message_in_buffer.get()
-
+	pass
 	
