@@ -73,7 +73,7 @@ class Frame(wx.Frame):
 		self.txChat.AppendText(message + '\n')
 
 	def send_message(self, event):
-		if event.GetKeyCode() == wx.WXK_RETURN:
+		if self.client and self.client.connected and event.GetKeyCode() == wx.WXK_RETURN:
 			message = self.txTalk.GetValue()
 			self.txTalk.Clear()
 			self.client.out_buffer.put(message)
