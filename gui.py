@@ -16,7 +16,7 @@ class UpdateChat(threading.Thread):
 
 class Frame(wx.Frame):
 	def __init__(self, parent, title):
-		super(Frame, self).__init__(parent, title = title, size = (300, 500))
+		super(Frame, self).__init__(parent, title=title, size=(300, 500))
 		self.client = None
 		self.init_gui()
 		self.Bind(wx.EVT_CLOSE, self.close)
@@ -43,7 +43,7 @@ class Frame(wx.Frame):
 	def init_conn_panel(self):
 		self.txConn = wx.TextCtrl(self.conn_panel)
 		self.txConn.SetValue('localhost')
-		self.btConn = wx.Button(self.conn_panel, label = 'Connect')
+		self.btConn = wx.Button(self.conn_panel, label='Connect')
 
 		connSizer = wx.BoxSizer(wx.HORIZONTAL)
 		connSizer.Add(self.txConn, 1, wx.EXPAND)
@@ -53,14 +53,14 @@ class Frame(wx.Frame):
 		self.Bind(wx.EVT_BUTTON, self.connect_disconnect, self.btConn)
 
 	def init_chat_panel(self):
-		self.txChat = wx.TextCtrl(self.chat_panel, style = wx.TE_MULTILINE | wx.TE_READONLY)
+		self.txChat = wx.TextCtrl(self.chat_panel, style=wx.TE_MULTILINE | wx.TE_READONLY)
 
 		chatSizer = wx.BoxSizer(wx.HORIZONTAL)
 		chatSizer.Add(self.txChat, 1, wx.EXPAND)
 		self.chat_panel.SetSizer(chatSizer)
 
 	def init_talk_panel(self):
-		self.txTalk = wx.TextCtrl(self.talk_panel, style = wx.TE_PROCESS_ENTER)
+		self.txTalk = wx.TextCtrl(self.talk_panel, style=wx.TE_PROCESS_ENTER)
 		self.txTalk.SetFocus()
 
 		talkSizer = wx.BoxSizer(wx.HORIZONTAL)
@@ -89,11 +89,11 @@ class Frame(wx.Frame):
 		# from http://stackoverflow.com/questions/7160737
 
 		regex = re.compile(
-        	#r'^(?:http|ftp)s?://' # http:// or https://
-        	r'(?:(?:[A-Z0-9](?:[A-Z0-9-]{0,61}[A-Z0-9])?\.)+(?:[A-Z]{2,6}\.?|[A-Z0-9-]{2,}\.?)|' #domain...
-        	r'localhost|' #localhost...
-        	r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})' # ...or ip
-        	#r'(?::\d+)?' # optional port
+        	# r'^(?:http|ftp)s?://' # http:// or https://
+        	r'(?:(?:[A-Z0-9](?:[A-Z0-9-]{0,61}[A-Z0-9])?\.)+(?:[A-Z]{2,6}\.?|[A-Z0-9-]{2,}\.?)|'  # domain...
+        	r'localhost|'  # localhost...
+        	r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})'  # ...or ip
+        	# r'(?::\d+)?' # optional port
         	r'(?:/?|[/?]\S+)$', re.IGNORECASE)
 
 		return regex.match(url)
@@ -122,7 +122,7 @@ class Frame(wx.Frame):
 
 
 if __name__ == '__main__':
-	#app = wx.App(redirect=True,filename="log.txt")
+	# app = wx.App(redirect=True,filename="log.txt")
 	app = wx.App()
 	frame = Frame(None, title='Chat')
 	app.MainLoop()

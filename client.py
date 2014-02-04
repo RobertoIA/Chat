@@ -37,15 +37,15 @@ class Client:
 		self.port = port
 		
 		# queues are thread safe
-		self.in_buffer = Queue.Queue(maxsize = 0) # infinite queue size
-		self.out_buffer = Queue.Queue(maxsize = 0)
+		self.in_buffer = Queue.Queue(maxsize=0)  # infinite queue size
+		self.out_buffer = Queue.Queue(maxsize=0)
 		
 		self.connected = False
 		
 	def connect(self):	
 		self.connected = True
 		main_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-		#main_socket.connect((socket.gethostname(), port))
+		# main_socket.connect((socket.gethostname(), port))
 		main_socket.connect((self.host, self.port))
 	
 		Receive(main_socket, self).start()
