@@ -18,6 +18,7 @@ class Frame(wx.Frame):
 	def __init__(self, parent, title):
 		super(Frame, self).__init__(parent, title=title, size=(300, 500))
 		self.client = None
+		self.last_user = None
 		self.init_gui()
 		self.Bind(wx.EVT_CLOSE, self.close)
 		self.Centre()
@@ -70,7 +71,12 @@ class Frame(wx.Frame):
 		self.txTalk.Bind(wx.EVT_KEY_DOWN, self.send_message)
 
 	def write_to_chat(self, message):
-		self.txChat.AppendText(message + '\n')
+		user = message[:message.find(':')]
+		if self.last_user and self.last_user == user:
+			self.txChat.AppendText('\t' + message[message.find(':') + 2:] + '\n')
+		else:
+			self.txChat.AppendText(message + '\n')
+		self.last_user = user
 
 	def send_message(self, event):
 		if self.client and self.client.connected and event.GetKeyCode() == wx.WXK_RETURN:
