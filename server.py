@@ -53,7 +53,6 @@ if __name__ == '__main__':
 	clients = []
 
 	main_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-	# main_socket.bind((socket.gethostname(), PORT))
 	main_socket.bind(('', PORT))
 	main_socket.listen(5)
 
