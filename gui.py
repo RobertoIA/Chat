@@ -63,6 +63,7 @@ class Frame(wx.Frame):
 	def init_talk_panel(self):
 		self.txTalk = wx.TextCtrl(self.talk_panel, style=wx.TE_PROCESS_ENTER)
 		self.txTalk.SetFocus()
+		self.txTalk.Disable()
 
 		talkSizer = wx.BoxSizer(wx.HORIZONTAL)
 		talkSizer.Add(self.txTalk, 1, wx.EXPAND)
@@ -118,12 +119,14 @@ class Frame(wx.Frame):
 				UpdateChat(self.write_to_chat, self.client).start()
 			self.btConn.SetLabel('Disconnect')
 			self.txConn.Disable()
+			self.txTalk.Enable()
 			self.txTalk.SetFocus()
 		else:
 			self.write_to_chat('Logged out.\n')
 			self.client.disconnect()
 			self.btConn.SetLabel('Connect')
 			self.txConn.Enable()
+			self.txTalk.Disable()
 			self.txTalk.SetFocus()
 
 
