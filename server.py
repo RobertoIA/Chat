@@ -27,7 +27,6 @@ class ClientManager(threading.Thread):
 					if '/exit' in line:
 						connected = False
 						clients.remove(self.conn)
-						self.conn.send('/exit')
 						logout_alert = self.id + ' logged out'
 						print logout_alert
 						for client in clients:

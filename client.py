@@ -11,7 +11,7 @@ class Receive(threading.Thread):
 		while self.client.connected:
 			msg = str(self.conn.recv(1024)).split('\n')
 			for line in msg:
-				if line != '' and '/exit' not in line:
+				if line != '':
 					self.buffer.put(line)
 		self.conn.close()
 
