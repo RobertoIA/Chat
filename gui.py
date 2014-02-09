@@ -115,12 +115,16 @@ class Frame(wx.Frame):
 				self.write_to_chat('Invalid direction: ' + host)
 			else:
 				self.write_to_chat('Connecting to ' + host + ':' + str(PORT))
-				self.client.connect()
-				UpdateChat(self.write_to_chat, self.client).start()
-			self.btConn.SetLabel('Disconnect')
-			self.txConn.Disable()
-			self.txTalk.Enable()
-			self.txTalk.SetFocus()
+				try:
+					self.client.connect()
+					UpdateChat(self.write_to_chat, self.client).start()
+					self.btConn.SetLabel('Disconnect')
+					self.txConn.Disable()
+					self.txTalk.Enable()
+					self.txTalk.SetFocus()
+				except:
+					self.write_to_chat('Connection failed.\n')
+				
 		else:
 			self.write_to_chat('Logged out.\n')
 			self.client.disconnect()

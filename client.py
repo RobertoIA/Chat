@@ -43,9 +43,9 @@ class Client:
 		self.connected = False
 		
 	def connect(self):	
-		self.connected = True
 		main_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 		main_socket.connect((self.host, self.port))
+		self.connected = True
 	
 		Receive(main_socket, self).start()
 		Send(main_socket, self).start()
