@@ -9,10 +9,15 @@ class Receive(threading.Thread):
 
 	def run(self):
 		while self.client.connected:
-			msg = str(self.conn.recv(1024)).split('\n')
-			for line in msg:
-				if line != '':
-					self.buffer.put(line)
+			try:
+				msg = str(self.conn.recv(1024)).split('\n')
+				for line in msg:
+					if line != '':
+						self.buffer.put(line)
+			except:
+				self.buffer.put('Connection lost\n')
+				self.client.disconnect()
+				break
 		self.conn.close()
 
 
@@ -26,9 +31,12 @@ class Send(threading.Thread):
 
 	def run(self):
 		while self.client.connected:
-			msg = self.buffer.get()
-			self.conn.send(msg)
-			if '/exit' in msg: self.client.connected = False
+			try:
+				msg = self.buffer.get()
+				self.conn.send(msg)
+				if '/exit' in msg: self.client.connected = False
+			except:
+				break
 		self.conn.close()
 
 class Client:
