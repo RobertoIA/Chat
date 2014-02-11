@@ -5,14 +5,20 @@ from client import Client
 PORT = 8080
 
 class UpdateChat(threading.Thread):
-	def __init__(self, write, client):
+	def __init__(self, write, client, parent):
 		threading.Thread.__init__(self)
 		self.write = write
 		self.client = client
+		self.frame = parent
 
 	def run(self):
 		while self.client.connected:
 			self.write(self.client.in_buffer.get())
+		# Dropped connection
+		self.frame.btConn.SetLabel('Connect')
+		self.frame.txConn.Enable()
+		self.frame.txTalk.Disable()
+		self.frame.txTalk.SetFocus()
 
 class Frame(wx.Frame):
 	def __init__(self, parent, title):
@@ -117,7 +123,7 @@ class Frame(wx.Frame):
 				self.write_to_chat('Connecting to ' + host + ':' + str(PORT))
 				try:
 					self.client.connect()
-					UpdateChat(self.write_to_chat, self.client).start()
+					UpdateChat(self.write_to_chat, self.client, self).start()
 					self.btConn.SetLabel('Disconnect')
 					self.txConn.Disable()
 					self.txTalk.Enable()
