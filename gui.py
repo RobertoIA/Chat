@@ -79,8 +79,9 @@ class Frame(wx.Frame):
 
 	def write_to_chat(self, message):
 		user = message[:message.find(':')]
+		msg = message[message.find(':') + 2:]
 		if self.last_user and self.last_user == user:
-			self.txChat.AppendText('\t' + message[message.find(':') + 2:] + '\n')
+			self.txChat.AppendText('\t' + msg + '\n')
 		else:
 			self.txChat.AppendText(message + '\n')
 		self.last_user = user
