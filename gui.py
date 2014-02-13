@@ -15,10 +15,7 @@ class UpdateChat(threading.Thread):
 		while self.client.connected:
 			self.write(self.client.in_buffer.get())
 		# Dropped connection
-		self.frame.btConn.SetLabel('Connect')
-		self.frame.txConn.Enable()
-		self.frame.txTalk.Disable()
-		self.frame.txTalk.SetFocus()
+		self.frame.set_disconnected_UI()
 
 class Frame(wx.Frame):
 	def __init__(self, parent, title):
@@ -111,6 +108,18 @@ class Frame(wx.Frame):
         	r'(?:/?|[/?]\S+)$', re.IGNORECASE)
 
 		return regex.match(url)
+	
+	def set_connected_UI(self):
+		self.btConn.SetLabel('Disconnect')
+		self.txConn.Disable()
+		self.txTalk.Enable()
+		self.txTalk.SetFocus()
+	
+	def set_disconnected_UI(self):
+		self.btConn.SetLabel('Connect')
+		self.txConn.Enable()
+		self.txTalk.Disable()
+		self.txTalk.SetFocus()
 
 	def connect_disconnect(self, e):
 		if not self.client or not self.client.connected:
@@ -125,20 +134,14 @@ class Frame(wx.Frame):
 				try:
 					self.client.connect()
 					UpdateChat(self.write_to_chat, self.client, self).start()
-					self.btConn.SetLabel('Disconnect')
-					self.txConn.Disable()
-					self.txTalk.Enable()
-					self.txTalk.SetFocus()
+					self.set_connected_UI()
 				except:
 					self.write_to_chat('Connection failed.\n')
 				
 		else:
 			self.write_to_chat('Logged out.\n')
 			self.client.disconnect()
-			self.btConn.SetLabel('Connect')
-			self.txConn.Enable()
-			self.txTalk.Disable()
-			self.txTalk.SetFocus()
+			self.set_disconnected_UI()
 
 
 if __name__ == '__main__':
