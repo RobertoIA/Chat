@@ -2,12 +2,14 @@ import threading, socket
 
 class ClientManager(threading.Thread):
 	def __init__(self, conn, addr):
+		""" Creates a thread to deal with a client connection."""
 		threading.Thread.__init__(self)
 		self.conn = conn
 		self.addr = addr
 		self.id = self.addr[0] + '/' + str(self.addr[1])
 
 	def run(self):
+		"""Thread logic. Receives and processes client messages, sending responses or modifying state."""
 		global clients
 
 		clients.append(self.conn)
@@ -24,6 +26,7 @@ class ClientManager(threading.Thread):
 			msg = str(self.conn.recv(1024)).split('\n')
 			for line in msg:
 				if line != '':
+					# logout command
 					if '/exit' in line:
 						connected = False
 						clients.remove(self.conn)
@@ -31,6 +34,7 @@ class ClientManager(threading.Thread):
 						print logout_alert
 						for client in clients:
 							if client is not self.conn: client.send(logout_alert)
+					# namechange command
 					elif '/name' in line:
 						index = line.find('/name') + len('/name')
 						new_id = line[index:]
@@ -40,6 +44,7 @@ class ClientManager(threading.Thread):
 						for client in clients:
 							client.send(name_change_alert)
 						self.id = new_id
+					# normal message
 					else:
 						response = self.id + ' : ' + line
 						print response
@@ -48,6 +53,7 @@ class ClientManager(threading.Thread):
 		self.conn.close()
 
 if __name__ == '__main__':
+	""" Creates a server on port 8080 and starts listening for connections."""
 	PORT = 8080
 	clients = []
 
