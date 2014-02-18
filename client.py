@@ -1,6 +1,7 @@
 import threading, socket, Queue
 
 class Receive(threading.Thread):
+	""" Thread that processes the incoming message queue."""
 	def __init__(self, conn, client):
 		threading.Thread.__init__(self)
 		self.conn = conn
@@ -8,6 +9,7 @@ class Receive(threading.Thread):
 		self.buffer = client.in_buffer
 
 	def run(self):
+		""" Puts incoming messages into the incoming queue until the connection ends."""
 		while self.client.connected:
 			try:
 				msg = str(self.conn.recv(1024)).split('\n')
@@ -15,6 +17,7 @@ class Receive(threading.Thread):
 					if line != '':
 						self.buffer.put(line)
 			except:
+				# Socket exception.
 				self.buffer.put('Connection lost\n')
 				self.client.disconnect()
 				break
@@ -22,6 +25,7 @@ class Receive(threading.Thread):
 
 
 class Send(threading.Thread):
+	""" Thread that processes the outgoing message queue."""
 	def __init__(self, conn, client):
 		threading.Thread.__init__(self)
 		self.conn = conn
@@ -30,12 +34,14 @@ class Send(threading.Thread):
 		self.buffer = client.out_buffer
 
 	def run(self):
+		""" Puts outgoing messages into the outgoing queue until the connection ends."""
 		while self.client.connected:
 			try:
 				msg = self.buffer.get()
 				self.conn.send(msg)
 				if '/exit' in msg: self.client.connected = False
 			except:
+				# closes the connection.
 				break
 		self.conn.close()
 
@@ -50,15 +56,18 @@ class Client:
 		
 		self.connected = False
 		
-	def connect(self):	
+	def connect(self):
+		""" Connects to the host."""	
 		main_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 		main_socket.connect((self.host, self.port))
 		self.connected = True
 	
+		# Starts both threads.
 		Receive(main_socket, self).start()
 		Send(main_socket, self).start()
 	
 	def disconnect(self):
+		""" Disconnects from the host."""
 		self.connected = False
 		self.out_buffer.put('/exit')
 
