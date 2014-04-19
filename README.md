@@ -1,6 +1,6 @@
 Chat
 =
-Simple UDP chat, written in python using sockets.
+Simple TCP chat written in python using sockets.
 Includes a command-line server and a gui client.
 
 ### Commands
